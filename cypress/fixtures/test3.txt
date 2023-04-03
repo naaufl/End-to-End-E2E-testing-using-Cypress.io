@@ -1,0 +1,84 @@
+
+describe('test3', () =>{
+
+beforeEach (() =>{
+
+  cy.session('login', () => {
+
+      cy.visit(" https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/home")
+      cy.get(".line-wrap").click()
+      cy.get(".login_link").click()
+      cy.get("#j_username").type('cat')
+      cy.get("#j_password").type('password')
+      cy.get("input[value='Login']").click()
+     // cy.url().should('contain', 'https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/home')
+     //cy.location('pathname').should('eq','https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/home')
+      
+  })
+
+})
+
+   it('valid login', () =>{
+    cy.visit(" https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/home")
+        let expName ="Cat Grant"
+
+        cy.get("#sidebar-trigger").click()
+        cy.get("[class='dropdown']>span").then( (x)=>{
+
+            let actName=x.text()
+            expect(actName).to.equal(expName)
+
+        })
+        
+      })
+
+        it("open request", () => {
+            cy.visit(" https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/home")
+            cy.get("#sidebar-trigger").click()
+            cy.xpath("//li[@id='category-4E37D35FDDE84BC1A395BD48D9778BF9']//a[contains(@class,'dropdown')]").click()
+            cy.xpath("//a[@href='/jw/web/userview/isr/isr/_/new_request']").click()
+            cy.url().should('contain', 'https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/new_request')
+        })
+
+        it("except subject & describe issue", () => {
+          cy.visit("https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/new_request")
+          cy.get('#assignmentComplete').click()
+          cy.wait(1000)
+          cy.get('.form-message.form-errors').should('contain','Validation Error')
+      })
+
+        it("except describe issue", () => {
+          cy.visit("https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/new_request")
+          cy.xpath("//input[@id='subject']").type("ahmad naufal")
+          cy.get('#assignmentComplete').click()
+          cy.wait(1000)
+          cy.get('.form-message.form-errors').should('contain','Validation Error')
+      })
+
+        it("all", () => {
+          cy.visit("https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/new_request")
+          cy.xpath("//input[@id='subject']").type("ahmad ")
+          cy.xpath("//textarea[@id='description']").type("pre IV QA test")
+          cy.get('#assignmentComplete').click()
+          cy.wait(1000)
+          cy.url().should('contain', 'https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/my_requests')
+          cy.xpath("//td[@class='column_subject footable-visible']").should('contain', 'ahmad ')
+
+      })
+
+      it("upload all", () => {
+        cy.visit("https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/new_request")
+        cy.xpath("//input[@id='subject']").type("ahmad naufal")
+        cy.xpath("//textarea[@id='description']").type("pre IV QA test 23 - 3 - 2023")
+        cy.get("#attachment1").attachFile({ filePath: 'test3.txt', encoding: 'utf-8' })
+        cy.wait(2000)
+        cy.get('#assignmentComplete').click()
+        cy.wait(1000)
+        cy.url().should('contain', 'https://qainterview.cloud.joget.com/jw/web/userview/isr/isr/_/my_requests')
+        cy.get("tbody tr:nth-child(1) td:nth-child(2)").should('contain', 'ahmad naufal')
+
+    })
+
+
+
+})
